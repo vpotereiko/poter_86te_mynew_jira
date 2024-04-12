@@ -1,3 +1,26 @@
+COLOR = {
+    'white': "\033[1;37m",
+    'yellow': "\033[1;33m",
+    'green': "\033[1;32m",
+    'blue': "\033[1;34m",
+    'cyan': "\033[1;36m",
+    'red': "\033[1;31m",
+    'magenta': "\033[1;35m",
+    'black': "\033[1;30m",
+    'darkwhite': "\033[0;37m",
+    'darkyellow': "\033[0;33m",
+    'darkgreen': "\033[0;32m",
+    'darkblue': "\033[0;34m",
+    'darkcyan': "\033[0;36m",
+    'darkred': "\033[0;31m",
+    'darkmagenta': "\033[0;35m",
+    'darkblack': "\033[0;30m",
+    'off': "\033[0;0m"
+}
+COLOR_YELLOW = "\033[1;33m"
+COLOR_OFF = "\033[0;0m"
+
+
 class DynamicMenu:
     """
     Клас для реалізації динамічного меню для будь яких класів, що наслідують цей клас.(<DynamicMenu>)
@@ -58,6 +81,45 @@ class DynamicMenu:
     def dynamic_menu_method_10(self, menu_id: int = 1, menu_option: str = '10'):
         pass
 
+    # def __init__(self, menu_items, back_func):
+    #     self.back_func = back_func
+    #     self.menu_items = menu_items
+    #     self.selected_item = 0
+    #     self.last_item = int(len(self.menu_items)) + 1
+    #
+    # def show_menu(self, item=1,):
+    #     if item == 1:
+    #         print(f"{COLOR_YELLOW}{self.__class__} menu {COLOR_OFF}")
+    #     print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {self.menu_items[item].__name__}")
+    #
+    #     if item == len(self.menu_items):
+    #         print(f"{COLOR_YELLOW}{self.last_item}{COLOR_OFF} Exit")
+    #         pass
+    #     else:
+    #         return self.show_menu(item + 1)
+    #
+    # def loop_of_menu(self):
+    #     self.show_menu()
+    #     try:
+    #         print(f"{color['darkblue']}{'-' * 5 * len(self.menu_items)}{off}")
+    #         self.selected_item = int(input("Enter your choice"))
+    #         print(f"{color['darkblue']}{'-' * 5 * len(self.menu_items)}{off}")
+    #         if self.selected_item < 1 or self.selected_item > self.last_item:
+    #             print(f"Your choice out of range (1-{self.last_item}")
+    #             return self.loop_of_menu()
+    #         else:
+    #             if self.selected_item == self.last_item:
+    #                 if callable(self.back_func):
+    #                     self.back_func()
+    #                     pass
+    #                 else:
+    #                     print(f"{color['darkgreen']}{'-' * 5 * len(self.menu_items)}{off}")
+    #                     self.menu_items[str(self.selected_item)]()
+    #                     print(f"{color['darkgreen']}{'-' * 5 * len(self.menu_items)}{off}")
+    #                     return self.loop_of_menu()
+    #     except Exception as e:
+    #         print(f"Error - try again:{str(e)}")
+    #         return self.loop_of_menu()
     def get_method(self, *args, **kwargs):
         method_name = 'dynamic_menu_method_d'  # (self, menu_id: int = 1, menu_option: str = 'd')
         args = args or []
@@ -78,8 +140,3 @@ class DynamicMenu:
         # else:
         #     pass  # TODO return method( )  # method(self)
         return method()  # method(self)
-
-
-
-
-

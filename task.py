@@ -2,19 +2,19 @@ from dmenu import DynamicMenu
 from filedb import FileDB
 
 
-# class PrivateKey:
-#     path = '../files/'
-#     last_key_id = int
-#     last_key = None
-#      def __init__(self):
-#          self.last_key_id = PrivateKey.last_key_id + 1
-#          self.last_key = PrivateKey.last_key_id
-#          PrivateKey.last_key_id = self.last_key_id
-#          PrivateKey.last_key = self.last_key
-
-
 class Task(DynamicMenu, FileDB):
-    pass
+    _task_items = []
+    # _menu_items = []
 
+    def __new__(cls, name, owner):
+        create_task = super().__new__(cls)
+        cls._task_items.append(create_task)
+        return create_task
+
+    def __init__(self, task_name, proj_owner):
+        self.task_name = task_name
+        self.proj_owner = proj_owner
+        self.file = FileDB(self)
+        self.task_id = self.file.task_id
 
 

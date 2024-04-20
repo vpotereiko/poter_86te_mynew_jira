@@ -1,28 +1,10 @@
+import json
 import os
-from string import digits
-from datetime import datetime
+from code_generator import CodeGenerator
 
-FILES_PATH = os.path.join(os.path.dirname(__file__))
-
-
-class PrivateKey:
-    _id = str
-
-    @property
-    def valid_keys(self):
-        keys = []
-        for key in os.listdir(self.path):
-            keys.append(key)
-        return keys
-
-    @staticmethod
-    def generate_new_key():
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
-        return str(int(ts)) # string.digits
-
-    def __init__(self):
-        self._id = PrivateKey.generate_new_key()
+FILES_PATHS = [
+    os.path.dirname(os.path.dirname(__file__)),
+]
 
 
 class FileDB:
@@ -36,8 +18,35 @@ class FileDB:
             <_id(2)> - string.digits - timestamp - task id;
             <task-slug-name> - string - project slug name службове ім'я завдання;
     """
-    _id = PrivateKey.generate_new_key()
-    path = FILES_PATH
+
+    def __init__(self, instance):
+        self.paths = FILES_PATHS
+        if instance is not None:
+            from task import Task
+            if isinstance(instance, Task):
+                self.task_id = str(CodeGenerator())
+                self.proj_id = instance.proj_owner.file.proj_id
+                self.proj_owner = instance.proj_owner
+                self.file_name = f"{self.proj_id}_{self.task_id}_{instance.task_name}_at_{instance.proj_owner.proj_name}.json"
+            else:  # project
+                self.proj_id = str(CodeGenerator())
+                self.proj_name = instance.proj_name
+                self.file_name = f"{self.proj_id}_{self.proj_name}.json"
+
+    def __str__(self):
+        return f"{self.file_name}"
+
+        # try:
+        #     # взяти з _owner якщо заповнено
+        #     if self._owner and instance(self,ProjectItem):
+        #         self.proj_id = str(CodeGenerator())
+        #     self.file_name = f"{self.proj_id}_{self._owner.name}.json"
+        # except Exception as e:
+        #     print(e)
+        #     self.proj_id = str(CodeGenerator())
+        #     self.task_id = str(CodeGenerator())
+        #     self.file_name = f"{self.proj_id}_{self.task_id}_{self._owner.name}.json"
+
     # def load_all_data(emp_path='def.json'):
     #     try:
     #         with open(emp_path, "r+") as f:

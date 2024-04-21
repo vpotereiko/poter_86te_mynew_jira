@@ -54,7 +54,7 @@ class Project(DynamicMenu, FileDB):
     def show_item(self, *args, **kwargs):
         active_obj = self._proj_items[kwargs['selected_item']-1]
         m_items = {
-            0: f'\n{COLOR_YELLOW}Проект {COLOR['blue']}{active_obj.proj_name}(лише перегляд):{COLOR_OFF}',
+            0: f'\n{COLOR_YELLOW}Проект {COLOR['blue']}{active_obj.proj_name}{COLOR_YELLOW}(лише перегляд):{COLOR_OFF}',
         }
         # #
         # # self.show_dmenu(m_items, 0)
@@ -69,6 +69,7 @@ class Project(DynamicMenu, FileDB):
             }
             m_items.update(m_upd)
             index += 1
+
         self.loop_dmenu(self, (), m_items=m_items, item=0, first_item=1,
                         last_item=len(m_items),
                         menu_id=2, menu_option='proj_view_readonly', active_obj=active_obj)

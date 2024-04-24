@@ -1,3 +1,5 @@
+import pprint
+
 COLOR = {
     'white': "\033[1;37m",
     'yellow': "\033[1;33m",
@@ -97,6 +99,9 @@ class DynamicMenu:
                 print(f"{COLOR_YELLOW}{last_item}: {COLOR['red']} Вихід{COLOR_OFF}")
             else:
                 if item >= first_item:
+                    #if iterrable(menu_items[item]):
+                    #    pass
+                    #else:
                     print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {menu_items[item]}")
                 else:
                     print(f"{menu_items[item]}")

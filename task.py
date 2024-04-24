@@ -9,6 +9,7 @@ class Task(DynamicMenu, FileDB):
     def __new__(cls, name, owner):
         create_task = super().__new__(cls)
         cls._task_items.append(create_task)
+        owner._task_items.append(create_task)
         return create_task
 
     def __init__(self, task_name, proj_owner):

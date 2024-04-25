@@ -101,7 +101,7 @@ class DynamicMenu:
                 if item >= first_item:
                     if isinstance(menu_items[item], list):
                         print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {menu_items[item][0]}", end='')
-                        print(f"{menu_items[item][1]}", end='')
+                        print(f"{menu_items[item][1] if isinstance(menu_items[item][1],str) else len(menu_items[item][1])}", end='')
                         print(f"{menu_items[item][2]}", end='\n')
                         # for i in range(1, len(menu_items[item]) - 1):
                         #     print(f"{menu_items[item][i]}")

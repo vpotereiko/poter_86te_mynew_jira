@@ -33,6 +33,7 @@ class Project(DynamicMenu, FileDB):
         if name != '':
             create_project = super().__new__(cls)
             cls._proj_items.append(create_project)
+            # додати всім
             return create_project
         else:
             return super().__new__(cls)
@@ -44,19 +45,28 @@ class Project(DynamicMenu, FileDB):
         self.proj_desc = proj_desc
         self._task_items = []
 
-    def dynamic_menu_method_d(self, menu_id: int = 1, menu_option: str = 'd'):
+    # def dynamic_menu_method_d(self, menu_id: int = 1, menu_option: str = 'd'):
+    def dynamic_menu_method_d(self, *args, **kwargs):
+        menu_id = kwargs.get('menu_id', int(0))
+        menu_option = kwargs.get('menu_option', 'main_app_menu')
+        items_list = kwargs.get('items_list', Project._proj_items)
         if menu_id == int(0) and menu_option == 'main_app_menu':
             m_items = {
                 0: f"\tГоловне меню",
                 1: f"{COLOR['blue']}Створити новий проект{COLOR_OFF}",
-                2: f"{COLOR['blue']}Переглянути список проектів{COLOR['green']}({len(Project._proj_items)}){COLOR_OFF}",
+                # 2: f"{COLOR['blue']}Переглянути список проектів{COLOR['green']}({len(Project._proj_items)}){
+                # COLOR_OFF}",
+                2: [f"{COLOR['blue']}Переглянути список проектів{COLOR['green']}(",
+                    kwargs.get('items_list', Project._proj_items),
+                    f"){COLOR_OFF}",
+                    ],
                 3: f"{COLOR['blue']}Редагувати проект{COLOR_OFF}",
                 4: f"{COLOR['red']}Видалити проект !{COLOR_OFF}",
                 5: f"{COLOR['green']}Відновити видалений проект{COLOR_OFF}",
             }
             # self.show_dmenu(m_items, 0) # для відладки промальовування
             self.loop_dmenu(self, (), m_items=m_items, item=0, first_item=1, last_item=6,
-                            menu_id=0, menu_option='main_app_menu')
+                            menu_id=0, items_list=items_list, menu_option='main_app_menu')
             return
 
     # menu_id = 3, menu_option = 5
@@ -167,7 +177,7 @@ class Project(DynamicMenu, FileDB):
         lp = self._proj_items.copy()
         lp.sort(key=lambda x: x.proj_name)
         i = 2
-        for  val in lp:
+        for val in lp:
             if val.proj_name == self.proj_name:
                 continue
             m_upd = {
@@ -175,7 +185,7 @@ class Project(DynamicMenu, FileDB):
             }
             m_items.update(m_upd)
             i += 1
-        self.loop_dmenu(self, m_items=m_items, item=0, first_item=len(self._proj_items),
+        self.loop_dmenu(self, m_items=m_items, item=0, first_item=1,
                         last_item=len(self._proj_items) + 1,
                         menu_id=1, menu_option='proj_list_readonly', list_items=self._proj_items)
 
@@ -244,7 +254,7 @@ class Project(DynamicMenu, FileDB):
                                 pass  # переглянути всі завдання нового проекту
                             case 4:
                                 pass  # зберегти новий проект і стоврити нове завдання у новому проекті
-                            case 5:   # зберегти новий проект
+                            case 5:  # зберегти новий проект
                                 self.save_new_project(*args, **kwargs)
                             case _:
                                 print(f"Your choice out of range ({kwargs['first_item']}-{kwargs['last_item']}")

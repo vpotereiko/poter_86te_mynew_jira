@@ -54,7 +54,7 @@ class DynamicMenu:
         pass
 
     def dynamic_menu_method_1(self, menu_id: int = 1, menu_option: str = '1'):
-            pass
+        pass
 
     def dynamic_menu_method_2(self, menu_id: int = 1, menu_option: str = '2'):
         pass
@@ -89,9 +89,9 @@ class DynamicMenu:
     #     self.selected_item = 0
     #     self.last_item = int(len(self.menu_items)) + 1
     #
-    def show_dmenu(self,*args, **kwargs):
-        item = kwargs.get('item',0)
-        menu_items = kwargs.get('m_items',{})
+    def show_dmenu(self, *args, **kwargs):
+        item = kwargs.get('item', 0)
+        menu_items = kwargs.get('m_items', {})
         first_item = kwargs.get('first_item', item)
         last_item = kwargs.get('last_item', len(menu_items))
         if 0 <= item <= last_item:
@@ -99,34 +99,38 @@ class DynamicMenu:
                 print(f"{COLOR_YELLOW}{last_item}: {COLOR['red']} Вихід{COLOR_OFF}")
             else:
                 if item >= first_item:
-                    #if iterrable(menu_items[item]):
-                    #    pass
-                    #else:
-                    print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {menu_items[item]}")
+                    if isinstance(menu_items[item], list):
+                        print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {menu_items[item][0]}", end='')
+                        print(f"{menu_items[item][1]}", end='')
+                        print(f"{menu_items[item][2]}", end='\n')
+                        # for i in range(1, len(menu_items[item]) - 1):
+                        #     print(f"{menu_items[item][i]}")
+                    else:
+                        print(f"{COLOR_YELLOW}{item}: {COLOR_OFF} {menu_items[item]}")
                 else:
                     print(f"{menu_items[item]}")
         else:
             if item >= last_item:
                 return
-        item = kwargs.get('item',first_item) + 1
+        item = kwargs.get('item', first_item) + 1
         kwargs['item'] = item
         return self.show_dmenu(*args, **kwargs)
 
-    def loop_dmenu(self,*args,**kwargs):
-        item = kwargs.get('item',0)
-        menu_items = kwargs.get('m_items',{})
+    def loop_dmenu(self, *args, **kwargs):
+        item = kwargs.get('item', 0)
+        menu_items = kwargs.get('m_items', {})
         first_item = kwargs.get('first_item', item)
         last_item = kwargs.get('last_item', len(menu_items))
         selected_item = kwargs.get('selected_item', None)
         list_items = kwargs.get('list_items', None)
-        self.show_dmenu(*args,**kwargs)
+        self.show_dmenu(*args, **kwargs)
         try:
             print(f"{COLOR['darkblue']}{'-' * 5 * len(menu_items)}{COLOR_OFF}")
             selected_item = int(input("Enter your choice"))
             print(f"{COLOR['darkblue']}{'-' * 5 * len(menu_items)}{COLOR_OFF}")
             if first_item > selected_item > last_item:
                 print(f"Your choice out of range ({item}-{last_item}")
-                return self.loop_dmenu(*args,**kwargs)
+                return self.loop_dmenu(*args, **kwargs)
             else:
                 # last_selected_item = kwargs.get('last_selected_item',selected_item)
                 if selected_item and selected_item == last_item:
@@ -136,14 +140,15 @@ class DynamicMenu:
                     #     pass
                 else:
                     print(f"{COLOR['darkgreen']}{'-' * 5 * last_item}{COLOR_OFF}")
-                    kwargs['selected_item']= selected_item
-                    self.get_method(*args,**kwargs)
+                    kwargs['selected_item'] = selected_item
+                    self.get_method(*args, **kwargs)
                     # menu_items[str(selected_item)]()
                     print(f"{COLOR['darkgreen']}{'-' * 5 * last_item}{COLOR_OFF}")
-                    return self.loop_dmenu(*args,**kwargs)
+                    return self.loop_dmenu(*args, **kwargs)
         except Exception as e:
             print(f"Error - try again:{str(e)}")
-            return self.loop_dmenu(*args,**kwargs)
+            return self.loop_dmenu(*args, **kwargs)
+
     def get_method(self, *args, **kwargs):
         method_name = 'dynamic_menu_method_d'  # (self, menu_id: int = 1, menu_option: str = 'd')
         args = args or []

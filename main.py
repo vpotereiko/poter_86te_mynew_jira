@@ -36,7 +36,7 @@ def main():
     print()
     pprint.pprint(f"{p1.__dict__=}")
     print()
-    t1 = Task('task1', p1)
+    t1 = Task('task1', 'desc1', p1)
     pprint.pprint(f"{t1.__dict__=}")
     p1.get_method('dynamic_menu_method_d')
 

@@ -26,24 +26,57 @@ COLOR_OFF = "\033[0;0m"
 
 class Project(DynamicMenu, FileDB):
     _proj_items = []
-
-    # _menu_items = []
+    # http://database.ukrcensus.gov.ua/dw_name/top10.asp
+    # TOP15 - 2022
+    _responsible_persons = [
+        "МАКСИМ",
+        "ДАВИД",
+        "АРТЕМ",
+        "МАТВІЙ",
+        "ТИМОФІЙ",
+        "ДАНИЛО",
+        "ОЛЕКСАНДР",
+        "МАРКО",
+        "ВЛАДИСЛАВ",
+        "ДЕНИС",
+        "ІВАН",
+        "АНДРІЙ",
+        "ДЕМ'ЯН",
+        "ОСТАП",
+        "РОМАН",
+        #
+        "АННА",
+        "СОФІЯ",
+        "АНАСТАСІЯ",
+        "ЗЛАТА",
+        "СОЛОМІЯ",
+        "ЕМІЛІЯ",
+        "ЄВА",
+        "ЯНА",
+        "ДІАНА",
+        "ЮЛІЯ",
+        "МАРІЯ",
+        "ВІКТОРІЯ",
+        "ВЕРОНІКА",
+        "АНГЕЛІНА",
+        "ДАРИНА",
+    ]
 
     def __new__(cls, name='', desc=''):
         if name != '':
             create_project = super().__new__(cls)
             cls._proj_items.append(create_project)
-            # додати всім
             return create_project
         else:
             return super().__new__(cls)
 
     def __init__(self, proj_name, proj_desc=''):
-        self.proj_name = proj_name
+        self.name = proj_name
         self.file = FileDB(self)
-        self.proj_id = self.file.proj_id
-        self.proj_desc = proj_desc
-        self._task_items = []
+        self._id = self.file.proj_id
+        self.desc = proj_desc
+        self.task_items = []
+        self.resp_persons = []
 
     # def dynamic_menu_method_d(self, menu_id: int = 1, menu_option: str = 'd'):
     def dynamic_menu_method_d(self, *args, **kwargs):
@@ -75,8 +108,8 @@ class Project(DynamicMenu, FileDB):
         # повідомлення: Збережено (в меню)
         # видалити попередній тимчасовий проект = None
         _input_items = {
-            'new_proj_name': new_proj_obj.proj_name,
-            'new_proj_desc': new_proj_obj.proj_desc,
+            'new_proj_name': new_proj_obj.name,
+            'new_proj_desc': new_proj_obj.desc,
         }
         # new_proj_obj = Project(_input_items['new_proj_name'], _input_items['new_proj_desc'])
         # print(f"{COLOR_YELLOW}Створення нового проекту:{COLOR_OFF}")
@@ -89,18 +122,18 @@ class Project(DynamicMenu, FileDB):
             0: f"{COLOR_YELLOW}Створення нового проекту:{COLOR_OFF}",
             1: [
                 f"{COLOR_YELLOW}Назва проекту:{COLOR['blue']}",
-                kwargs.get('input_items', new_proj_obj.proj_name)['new_proj_name'],
+                kwargs.get('input_items', new_proj_obj.name)['new_proj_name'],
                 f"{COLOR['green']}(змінити){COLOR_OFF}",
             ],
             # 2: f"{COLOR_YELLOW}Опис проекту:{COLOR['blue']}{kwargs.get('new_proj_desc', '')}{COLOR['green']}(
             # змінити){COLOR_OFF}",
             2: [
                 f"{COLOR_YELLOW}Опис проекту:{COLOR['blue']}",
-                kwargs.get('input_items', new_proj_obj.proj_desc)['new_proj_desc'],
+                kwargs.get('input_items', new_proj_obj.desc)['new_proj_desc'],
                 f"{COLOR['green']}(змінити){COLOR_OFF}",
             ],
 
-            3: f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}({len(new_proj_obj._task_items)}){COLOR_OFF}",
+            3: f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}({len(new_proj_obj.task_items)}){COLOR_OFF}",
             4: f"{COLOR['blue']}Додати нове завдання{COLOR_OFF}",
         }
         input_items = kwargs.get('input_items', _input_items)
@@ -122,7 +155,68 @@ class Project(DynamicMenu, FileDB):
                         # new_proj_name=_input_items["new_proj_name"],
                         # new_proj_desc=_input_items['new_proj_desc'],
                         input_items=_input_items,
-                        task_items=new_proj_obj._task_items)
+                        task_items=new_proj_obj.task_items)
+
+    # menu_id = 3, menu_option = 4
+    def save_new_project_and_create_new_task(self, *args, **kwargs):
+        new_proj_obj = kwargs.get('new_proj_obj', Project(kwargs['new_proj_name'], kwargs['new_proj_desc']))
+        # повідомлення: Збережено (в меню)
+        # видалити попередній тимчасовий проект = None
+        _input_items = {
+            'new_proj_name': new_proj_obj.name,
+            'new_proj_desc': new_proj_obj.desc,
+        }
+        # new_proj_obj = Project(_input_items['new_proj_name'], _input_items['new_proj_desc'])
+        # print(f"{COLOR_YELLOW}Створення нового проекту:{COLOR_OFF}")
+        # print(f"{COLOR_YELLOW} 1: Назва проекту:{COLOR['blue']}")
+        # _input_items["new_proj_name"] = input('>')
+        # print(f"{COLOR_YELLOW} 2: Опис проекту:{COLOR['blue']}")
+        # _input_items['new_proj_desc'] = input('>')
+        # #
+        m_items = {
+            0: f"{COLOR_YELLOW}Створення нового проекту:{COLOR_OFF}",
+            1: [
+                f"{COLOR_YELLOW}Назва проекту:{COLOR['blue']}",
+                kwargs.get('input_items', new_proj_obj.name)['new_proj_name'],
+                f"{COLOR['green']}(змінити){COLOR_OFF}",
+            ],
+            # 2: f"{COLOR_YELLOW}Опис проекту:{COLOR['blue']}{kwargs.get('new_proj_desc', '')}{COLOR['green']}(
+            # змінити){COLOR_OFF}",
+            2: [
+                f"{COLOR_YELLOW}Опис проекту:{COLOR['blue']}",
+                kwargs.get('input_items', new_proj_obj.desc)['new_proj_desc'],
+                f"{COLOR['green']}(змінити){COLOR_OFF}",
+            ],
+
+            # 3: f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}({len(new_proj_obj.task_items)}){COLOR_OFF}",
+            3: [
+                f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}(",
+                kwargs.get('task_items', new_proj_obj.task_items)['task_items'],
+                f"){COLOR_OFF}",
+            ],
+            4: f"{COLOR['blue']}Додати нове завдання{COLOR_OFF}",
+        }
+        input_items = kwargs.get('input_items', _input_items)
+        selected_item = kwargs.get('selected_item', None)
+        list_items = kwargs.get('list_items', None)
+        first_item = kwargs.get('first_item', 1)
+        last_item = kwargs.get('last_item', 5)
+        # self.loop_dmenu(new_proj_obj, m_items=m_items, item=0, first_item=1, last_item=5,
+        #                 menu_id=3, menu_option='proj_new_create',
+        #                 # new_proj_name=_input_items["new_proj_name"],
+        #                 # new_proj_desc=_input_items['new_proj_desc'],
+        #                 input_items=_input_items,
+        #                 task_items=new_proj_obj.task_items,
+        #                 new_proj_obj=new_proj_obj)
+
+        self.loop_dmenu(new_task_obj, m_items=m_items, item=0, first_item=1, last_item=5,
+                        menu_id=3, menu_option='proj_new_create',
+                        # new_proj_name=_input_items["new_proj_name"],
+                        # new_proj_desc=_input_items['new_proj_desc'],
+                        input_items=_input_items,
+                        task_items=new_proj_obj.task_items,
+                        new_proj_obj=new_proj_obj,
+                        new_task_obj=new_task_obj)
 
     # menu_id = 0, menu_option = 1
     def create_new_project(self, *args, **kwargs):
@@ -152,7 +246,7 @@ class Project(DynamicMenu, FileDB):
                 f"{COLOR['green']}(змінити){COLOR_OFF}",
             ],
 
-            3: f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}({len(new_proj_obj._task_items)}){COLOR_OFF}",
+            3: f"{COLOR_YELLOW}Переглянути всі завдання {COLOR['green']}({len(new_proj_obj.task_items)}){COLOR_OFF}",
             4: f"{COLOR['green']}Зберегти проект {COLOR['blue']} + Додати нове завдання{COLOR_OFF}",
             5: f"{COLOR['green']}Зберегти проект {COLOR_OFF}",
         }
@@ -166,22 +260,22 @@ class Project(DynamicMenu, FileDB):
                         new_proj_name=_input_items["new_proj_name"],
                         new_proj_desc=_input_items['new_proj_desc'],
                         input_items=_input_items,
-                        task_items=new_proj_obj._task_items)
+                        task_items=new_proj_obj.task_items)
 
     #
     def show_selectable_items(self, *args, **kwargs):
         m_items = {
             0: f"\t{COLOR_YELLOW}Виберіть проект {COLOR['blue']}(лише перегляд):{COLOR_OFF}",
-            1: f"{COLOR['blue']}{self.proj_name}{COLOR_OFF}",
+            1: f"{COLOR['blue']}{self.name}{COLOR_OFF}",
         }
         lp = self._proj_items.copy()
-        lp.sort(key=lambda x: x.proj_name)
+        lp.sort(key=lambda x: x.name)
         i = 2
         for val in lp:
-            if val.proj_name == self.proj_name:
+            if val.name == self.name:
                 continue
             m_upd = {
-                i: f"{COLOR['blue']}{val.proj_name}{COLOR_OFF}",
+                i: f"{COLOR['blue']}{val.name}{COLOR_OFF}",
             }
             m_items.update(m_upd)
             i += 1
@@ -190,10 +284,52 @@ class Project(DynamicMenu, FileDB):
                         menu_id=1, menu_option='proj_list_readonly', list_items=self._proj_items)
 
     #
+    def show_editable_items(self, *args, **kwargs):
+        m_items = {
+            0: f"\t{COLOR_YELLOW}Виберіть проект {COLOR['blue']}(редагування):{COLOR_OFF}",
+            1: f"{COLOR['blue']}{self.name}{COLOR_OFF}",
+        }
+        lp = self._proj_items.copy()
+        lp.sort(key=lambda x: x.name)
+        i = 2
+        for val in lp:
+            if val.name == self.name:
+                continue
+            m_upd = {
+                i: f"{COLOR['blue']}{val.name}{COLOR_OFF}",
+            }
+            m_items.update(m_upd)
+            i += 1
+        self.loop_dmenu(self, m_items=m_items, item=0, first_item=1,
+                        last_item=len(self._proj_items) + 1,
+                        menu_id=2, menu_option='proj_list_editable', list_items=self._proj_items)
+
+    #
+    def edit_item(self, *args, **kwargs):
+        active_obj = self._proj_items[kwargs['selected_item'] - 1]
+        m_items = {
+            0: f"\n{COLOR_YELLOW}Проект {COLOR['blue']}{active_obj.name}{COLOR_YELLOW}(редагування):{COLOR_OFF}",
+        }
+        index = 1
+        for _, att in enumerate(dir(active_obj)):
+            if att[0:2] == '__' or att[0:1] == '_' or callable(getattr(active_obj, att)):
+                continue
+            m_upd = {
+                index: f"{COLOR_YELLOW}<{att}> : {COLOR['blue']}{str(getattr(active_obj, att))}{COLOR_OFF}",
+            }
+            m_items.update(m_upd)
+            index += 1
+        #
+        self.loop_dmenu(self, m_items=m_items, item=0, first_item=1,
+                        last_item=len(m_items),
+                        menu_id=2, menu_option='proj_view_editable', active_obj=active_obj)
+
+        #
+
     def show_item(self, *args, **kwargs):
         active_obj = self._proj_items[kwargs['selected_item'] - 1]
         m_items = {
-            0: f"\n{COLOR_YELLOW}Проект {COLOR['blue']}{active_obj.proj_name}{COLOR_YELLOW}(лише перегляд):{COLOR_OFF}",
+            0: f"\n{COLOR_YELLOW}Проект {COLOR['blue']}{active_obj.name}{COLOR_YELLOW}(лише перегляд):{COLOR_OFF}",
         }
         index = 1
         for _, att in enumerate(dir(active_obj)):
@@ -229,7 +365,7 @@ class Project(DynamicMenu, FileDB):
                             case 2:
                                 self.show_selectable_items(*args, **kwargs)
                             case 3:
-                                self.menu_items[str(selected_item)]()
+                                self.show_editable_items(*args, **kwargs)
                             case 4:
                                 self.menu_items[str(selected_item)]()
                             case 5:
@@ -242,18 +378,22 @@ class Project(DynamicMenu, FileDB):
                         for i, val in enumerate(self._proj_items):
                             if (i + 1) == selected_item:
                                 self.show_item(*args, **kwargs)
+                    elif kwargs['menu_id'] == 2 and kwargs['menu_option'] == 'proj_list_editable':
+                        for i, val in enumerate(self._proj_items):
+                            if (i + 1) == selected_item:
+                                self.edit_item(*args, **kwargs)
                     elif kwargs['menu_id'] == 3 and kwargs['menu_option'] == 'proj_new_create':
                         match selected_item:
                             case 0:
                                 pass
-                            case 1:
-                                pass  # змінити назву нового проекту
-                            case 2:
-                                pass  # змінити опис нового проекту
-                            case 3:
-                                pass  # переглянути всі завдання нового проекту
-                            case 4:
-                                pass  # зберегти новий проект і стоврити нове завдання у новому проекті
+                            case 1:  # змінити назву нового проекту
+                                pass  #
+                            case 2:  # змінити опис нового проекту
+                                pass  #
+                            case 3:  # переглянути всі завдання нового проекту
+                                pass  #
+                            case 4:  # зберегти новий проект і стоврити нове завдання у новому проекті
+                                pass  # self.save_new_project_and_create_new_task(*args, **kwargs)
                             case 5:  # зберегти новий проект
                                 self.save_new_project(*args, **kwargs)
                             case _:
@@ -280,7 +420,7 @@ class Project(DynamicMenu, FileDB):
                     else:
                         print(f"Your choice out of range ({kwargs['first_item']}-{kwargs['last_item']}")
                         kwargs['selected_item'] = None
-                        return self.loop_of_menu(*args, **kwargs)
+                        return self.loop_dmenu(*args, **kwargs)
                     #
                     # else:
                     #     if selected_item == self.last_item:

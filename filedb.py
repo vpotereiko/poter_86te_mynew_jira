@@ -25,12 +25,12 @@ class FileDB:
             from task import Task
             if isinstance(instance, Task):
                 self.task_id = str(CodeGenerator())
-                self.proj_id = instance.proj_owner.file.proj_id
-                self.proj_owner = instance.proj_owner
-                self.file_name = f"{self.proj_id}_{self.task_id}_{instance.task_name}_at_{instance.proj_owner.proj_name}.json"
+                self.proj_id = instance.owner.file.proj_id
+                self.proj_owner = instance.owner
+                self.file_name = f"{self.proj_id}_{self.task_id}_{instance.name}_at_{instance.owner.name}.json"
             else:  # project
                 self.proj_id = str(CodeGenerator())
-                self.proj_name = instance.proj_name
+                self.proj_name = instance.name
                 self.file_name = f"{self.proj_id}_{self.proj_name}.json"
 
     def __str__(self):
